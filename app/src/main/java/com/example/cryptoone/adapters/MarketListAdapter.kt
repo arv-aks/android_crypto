@@ -3,6 +3,7 @@ package com.example.cryptoone.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.*
 import android.view.View.OnTouchListener
@@ -14,6 +15,7 @@ import com.example.cryptoone.ChartActivity
 import com.example.cryptoone.R
 import com.example.cryptoone.model.market.MarketsModelItem
 import com.squareup.picasso.Picasso
+import kotlin.math.roundToInt
 
 
 class MarketListAdapter(
@@ -39,14 +41,23 @@ class MarketListAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
+        val percentage =  (marketList[position].price_change_percentage_24h * 100.0).roundToInt() / 100.0
+
 
         holder.name.text = marketList[position].name
         Picasso.get()
             .load(marketList[position].image)
             .into(holder.image);
         holder.price.text = "$ " + marketList[position].current_price
-        holder.priceChangePercentage.text =
-            marketList[position].price_change_percentage_24h.toString()
+       if(percentage<0.0){
+           //negative
+           holder.priceChangePercentage.text = "$percentage %"
+           holder.priceChangePercentage.setTextColor(Color.RED)
+       }else if (percentage>0.0){
+           //positive
+           holder.priceChangePercentage.text = "+ $percentage %"
+           holder.priceChangePercentage.setTextColor(Color.GREEN)
+       }
 
         holder.itemView.setOnClickListener {
             val intent = Intent(it.context, ChartActivity::class.java).apply {

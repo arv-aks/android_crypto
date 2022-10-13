@@ -4,13 +4,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".ChartActivity">
 
-    <com.github.mikephil.charting.charts.LineChart
-        app:layout_constraintTop_toTopOf="parent"
+
+    <RelativeLayout
+        android:id="@+id/coinDetailRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="80dp"
+        android:gravity="start"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iconImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/iconImage"
+            android:orientation="vertical">
+
+            <TextView
+
+                android:id="@+id/txtCoinName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Binance coin"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+
+                android:id="@+id/txtId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BTC"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_alignParentEnd="true"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$9897"
+                android:textColor="@android:color/black"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/txtPer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+93%"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/dividerTop"
+        app:layout_constraintBottom_toBottomOf="@+id/coinDetailRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+
+    <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/dividerTop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

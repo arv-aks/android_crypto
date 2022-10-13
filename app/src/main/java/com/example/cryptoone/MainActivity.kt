@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -54,9 +55,18 @@ class MainActivity : AppCompatActivity() {
 
         marketListAdapter = MarketListAdapter(this)
 
-        marketRecyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         marketRecyclerView.adapter = marketListAdapter
+
+        marketRecyclerView.layoutManager =layoutManager
+
+        marketRecyclerView.addItemDecoration(
+            DividerItemDecoration(
+                baseContext,
+                layoutManager.orientation
+            )
+        )
 
         getData()
 

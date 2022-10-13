@@ -14,10 +14,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 
-data class CoinDetail (
-	@SerializedName("sparkline_in_7d") val sparkline_in_7d : Sparkline_in_7d
+data class CoinDetail(
+
+    @SerializedName("current_price") var currentPrice: String?,
+
+    @SerializedName("name") var name: String?,
+
+    @SerializedName("symbol") var symbol: String?,
+
+    @SerializedName("image") var image: String?,
+
+    @SerializedName("price_change_percentage_24h") var priceChangePercentage24h: String?,
+
+    @SerializedName("sparkline_in_7d") val sparkline_in_7d: Sparkline_in_7d
 )
 
 data class Sparkline_in_7d(
-	@SerializedName("price") val price : List<Double>
+    @SerializedName("price") val price: List<Double>
 )

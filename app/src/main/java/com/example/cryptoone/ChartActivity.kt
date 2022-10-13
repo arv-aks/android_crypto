@@ -1,7 +1,12 @@
 package com.example.cryptoone
 
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Shader
 import android.os.Bundle
-import android.widget.Toast
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -14,13 +19,17 @@ import com.example.cryptoone.viewModels.coinDetail.CoinDetailViewModelFactory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.DefaultFillFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.squareup.picasso.Picasso
+import java.util.*
+
 
 class ChartActivity : AppCompatActivity() {
 
@@ -34,6 +43,14 @@ class ChartActivity : AppCompatActivity() {
     var sparkLine: ArrayList<Entry> = ArrayList()
 
 
+    private lateinit var tvPrice: TextView
+    private lateinit var iconImage: ImageView
+    private lateinit var coinName: TextView
+    private lateinit var coinNameSub: TextView
+    private lateinit var coinPrice: TextView
+    private lateinit var coinPercentage: TextView
+
+    private lateinit var paint1 : Paint
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +59,36 @@ class ChartActivity : AppCompatActivity() {
 
         val selectedId = intent.extras?.getString("id")
 
+        tvPrice = findViewById(R.id.txt_view_price)
+        iconImage =findViewById(R.id.iconImage)
+        coinName = findViewById(R.id.txtCoinName)
+        coinNameSub = findViewById(R.id.txtId)
+        coinPrice = findViewById(R.id.txtPrice)
+        coinPercentage = findViewById(R.id.txtPer)
 
-        val chart = findViewById<LineChart>(R.id.chart)
+
+        val customMarkerView =
+            CustomMarker(context = applicationContext, R.layout.custom_marker_view)
+
+        val chart = findViewById<LineChart>(R.id.chart).apply {
+            setBackgroundColor(Color.WHITE)
+            setDrawBorders(true)
+            description.isEnabled = true
+            setPinchZoom(false)
+            setDrawMarkers(true)
+            marker = customMarkerView
+            setDrawBorders(false)
+        }
+
+        //setup gradient
+        paint1 = chart.renderer.paintRender
+        val height = chart.height
+
+        val linGrad = LinearGradient(0f, 0f, 0f, height.toFloat(),
+            Color.YELLOW, Color.RED, Shader.TileMode.REPEAT)
+        paint1.shader =linGrad
+
+
 
         setUpLineChart(chart)
 
@@ -64,53 +109,67 @@ class ChartActivity : AppCompatActivity() {
 
             xAxis.position = XAxis.XAxisPosition.BOTTOM
 //            xAxis.valueFormatter = MyAxisFormatter()
-            xAxis.granularity = 1F
+//            xAxis.granularity = 1F
             xAxis.setDrawGridLines(true)
             xAxis.setDrawAxisLine(true)
             axisLeft.setDrawGridLines(true)
-            extraRightOffset = 30f
+//            extraRightOffset = 30f
 
-            legend.isEnabled = true
-            legend.orientation = Legend.LegendOrientation.VERTICAL
-            legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
-            legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-            legend.form = Legend.LegendForm.CIRCLE
+
+//            legend.isEnabled = false
+//            legend.orientation = Legend.LegendOrientation.VERTICAL
+//            legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+//            legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+//            legend.form = Legend.LegendForm.CIRCLE
 
         }
     }
 
     private fun setDataToLineChart(lineChart: LineChart, test2: List<Double>) {
 
-        val weekOneSales = LineDataSet(dataChart(test2), "Week 1")
-        weekOneSales.lineWidth = 3f
-        weekOneSales.valueTextSize = 15f
-        weekOneSales.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-        weekOneSales.color = ContextCompat.getColor(this, R.color.purple_500)
-        weekOneSales.valueTextColor = ContextCompat.getColor(this, R.color.teal_700)
-        weekOneSales.setDrawCircleHole(false)
-        weekOneSales.setDrawCircles(false)
+        val weekOneSales = LineDataSet(dataChart(test2), "Week 1").apply {
+
+            lineWidth = 1f
+            valueTextSize = 5f
+
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+
+            color = ContextCompat.getColor(applicationContext, R.color.purple_500)
+
+            setDrawCircleHole(false)
+            setDrawCircles(false)
+
+            setDrawFilled(true)
+
+
+//            fillFormatter = object : DefaultFillFormatter() {
+//                override fun getFillLinePosition(
+//                    dataSet: ILineDataSet?,
+//                    dataProvider: LineDataProvider?
+//                ): Float {
+//                    return super.getFillLinePosition(dataSet, dataProvider)
+//                }
+//            }
+        }
 
 
         val dataSet = ArrayList<ILineDataSet>()
         dataSet.add(weekOneSales)
 //        dataSet.add(weekTwoSales)
 
+
         val lineData = LineData(dataSet)
+
         lineChart.data = lineData
+        lineChart.description.text = "Days"
+        lineChart.setNoDataText("No forex yet!")
+        lineChart.animateX(1000, Easing.EaseInExpo)
+
+
 
         lineChart.invalidate()
     }
 
-
-    private fun week1(): ArrayList<Entry> {
-        val sales = ArrayList<Entry>()
-        sales.add(Entry(0f, 15f))
-        sales.add(Entry(1f, 16f))
-        sales.add(Entry(2f, 13f))
-        sales.add(Entry(3f, 22f))
-        sales.add(Entry(4f, 20f))
-        return sales
-    }
 
     private fun dataChart(test2: List<Double>): ArrayList<Entry> {
         val data = ArrayList<Entry>()
@@ -148,18 +207,40 @@ class ChartActivity : AppCompatActivity() {
 
         coinViewModel = ViewModelProvider(
             this,
-            CoinDetailViewModelFactory(repository, id = selectedId, currency = "usd" )
+            CoinDetailViewModelFactory(repository, id = selectedId, currency = "usd")
         )[CoinDetailViewModel::class.java]
 
 
         coinViewModel.getCoinDetailRepository().observe(this) {
 
             val test = it[0].sparkline_in_7d
-            val test2= test.price
+            val test2 = test.price
 
+            val df = "$ ${it[0].currentPrice}"
+
+            val percentage = it[0].priceChangePercentage24h
+
+            this.tvPrice.text = df
+            this.coinName.text = "${it[0].name}"
+            this.coinPrice.text = df
+            this.coinPercentage.text = it[0].priceChangePercentage24h
+
+            if (percentage != null) {
+                if(percentage.toDouble()<0.0){
+                    //negative
+                    this.coinPercentage.setTextColor(Color.RED)
+                }else if (percentage.toDouble()>0.0){
+                    //positive
+                    this.coinPercentage.setTextColor(Color.GREEN)
+                }
+            }
+
+            this.coinNameSub.text = it[0].symbol
+            Picasso.get()
+                .load(it[0].image)
+                .into(this.iconImage);
 
             setDataToLineChart(lineChart = lineChart, test2)
-
 
 
         }
