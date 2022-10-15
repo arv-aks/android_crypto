@@ -1,11 +1,12 @@
 package com.example.cryptoone
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.util.Log
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,17 +16,25 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.cryptoone.adapters.MarketListAdapter
 import com.example.cryptoone.api.CryptoApi
-import com.example.cryptoone.api.RetrofitHelper
+import com.example.cryptoone.api.AppModule
+import com.example.cryptoone.model.details.CoinDetail
 import com.example.cryptoone.repository.CryptoRepository
+import com.example.cryptoone.utils.NetworkResult
 import com.example.cryptoone.viewModels.market.MarketViewModel
 import com.example.cryptoone.viewModels.market.MarketViewModelFactory
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    lateinit var marketViewModel: MarketViewModel
 
     lateinit var marketRecyclerView: RecyclerView
 
     lateinit var marketListAdapter: MarketListAdapter
+
+    lateinit var progress: ProgressBar
+
+    private val marketViewModel by viewModels<MarketViewModel>()
 
 
 /*
@@ -51,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        progress = findViewById(R.id.circularProgress)
+
         marketRecyclerView = findViewById(R.id.recyclerView)
 
         marketListAdapter = MarketListAdapter(this)
@@ -68,36 +79,28 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        getData()
-
-        // test()
-
-
-    }
-
-    private fun getData() {
-
-        val api = RetrofitHelper.getInstance().create(CryptoApi::class.java)
-
-        val repository = CryptoRepository(api)
-
-        marketViewModel = ViewModelProvider(
-            this,
-            MarketViewModelFactory(repository)
-        )[MarketViewModel::class.java]
-
-
-        marketViewModel.getMarketRepository().observe(this) {
-
-            marketListAdapter.setMarketListItems(it)
-
+        marketViewModel.marketResponseLiveData.observe(this) {
+            progress.isVisible = false
+            when (it) {
+                is NetworkResult.Success -> {
+                    marketListAdapter.setMarketListItems(it.data!!)
+                }
+                is NetworkResult.Error -> {
+                    Toast.makeText(applicationContext, "${it.message}", Toast.LENGTH_SHORT).show()
+                }
+                is NetworkResult.Loading -> {
+                    progress.isVisible = true
+                }
+            }
         }
 
 
+
     }
 
 
-    private fun test() {
+
+   /* private fun test() {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url: String = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
@@ -120,5 +123,5 @@ class MainActivity : AppCompatActivity() {
             },
             { Toast.makeText(applicationContext, "not working", Toast.LENGTH_SHORT).show() })
         queue.add(stringReq)
-    }
+    }*/
 }

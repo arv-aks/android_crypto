@@ -9,13 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.cryptoone.api.CryptoApi
-import com.example.cryptoone.api.RetrofitHelper
 import com.example.cryptoone.model.details.CoinDetail
-import com.example.cryptoone.repository.CryptoRepository
-import com.example.cryptoone.viewModels.coinDetail.CoinDetailViewModel
-import com.example.cryptoone.viewModels.coinDetail.CoinDetailViewModelFactory
+//import com.example.cryptoone.viewModels.coinDetail.CoinDetailViewModel
+//import com.example.cryptoone.viewModels.coinDetail.CoinDetailViewModelFactory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -23,11 +19,8 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.DefaultFillFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.squareup.picasso.Picasso
 import java.util.*
 
 
@@ -35,7 +28,7 @@ class ChartActivity : AppCompatActivity() {
 
     val tag = "CHART_ACTIVITY"
 
-    private lateinit var coinViewModel: CoinDetailViewModel
+//    private lateinit var coinViewModel: CoinDetailViewModel
 
     private var coinDetailList: ArrayList<CoinDetail> = ArrayList()
 
@@ -50,6 +43,7 @@ class ChartActivity : AppCompatActivity() {
     private lateinit var coinPrice: TextView
     private lateinit var coinPercentage: TextView
 
+
     private lateinit var paint1 : Paint
 
 
@@ -59,7 +53,6 @@ class ChartActivity : AppCompatActivity() {
 
         val selectedId = intent.extras?.getString("id")
 
-        tvPrice = findViewById(R.id.txt_view_price)
         iconImage =findViewById(R.id.iconImage)
         coinName = findViewById(R.id.txtCoinName)
         coinNameSub = findViewById(R.id.txtId)
@@ -92,7 +85,7 @@ class ChartActivity : AppCompatActivity() {
 
         setUpLineChart(chart)
 
-        getData(chart, selectedId!!)
+       // getData(chart, selectedId!!)
 
 
 
@@ -199,7 +192,7 @@ class ChartActivity : AppCompatActivity() {
     }
 
 
-    private fun getData(lineChart: LineChart, selectedId: String) {
+   /* private fun getData(lineChart: LineChart, selectedId: String) {
 
         val api = RetrofitHelper.getInstance().create(CryptoApi::class.java)
 
@@ -220,7 +213,7 @@ class ChartActivity : AppCompatActivity() {
 
             val percentage = it[0].priceChangePercentage24h
 
-            this.tvPrice.text = df
+//            this.tvPrice.text = df
             this.coinName.text = "${it[0].name}"
             this.coinPrice.text = df
             this.coinPercentage.text = it[0].priceChangePercentage24h
@@ -248,5 +241,5 @@ class ChartActivity : AppCompatActivity() {
 
     }
 
-
+*/
 }

@@ -6,14 +6,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.*
-import android.view.View.OnTouchListener
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cryptoone.ChartActivity
 import com.example.cryptoone.R
-import com.example.cryptoone.model.market.MarketsModelItem
+import com.example.cryptoone.model.market.MarketModel
 import com.squareup.picasso.Picasso
 import kotlin.math.roundToInt
 
@@ -23,8 +21,7 @@ class MarketListAdapter(
 ) :
     RecyclerView.Adapter<MarketListAdapter.MyViewHolder>() {
 
-    var marketList: List<MarketsModelItem> = listOf()
-
+    var marketList: List<MarketModel> = listOf()
 
     private val inflater: LayoutInflater
 
@@ -41,14 +38,13 @@ class MarketListAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-        val percentage =  (marketList[position].price_change_percentage_24h * 100.0).roundToInt() / 100.0
+        val percentage =  (marketList[position].priceChange24h * 100.0).roundToInt() / 100.0
 
 
         holder.name.text = marketList[position].name
-        Picasso.get()
-            .load(marketList[position].image)
-            .into(holder.image);
-        holder.price.text = "$ " + marketList[position].current_price
+        Picasso.get().load(marketList[position].image).into(holder.image)
+
+        holder.price.text = "$ " + marketList[position].currentPrice
        if(percentage<0.0){
            //negative
            holder.priceChangePercentage.text = "$percentage %"
@@ -74,8 +70,9 @@ class MarketListAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setMarketListItems(movieList: List<MarketsModelItem>) {
+    fun setMarketListItems(movieList: List<MarketModel>) {
         this.marketList = movieList;
+        Log.w("Adapter: ", "${movieList[0]}")
         notifyDataSetChanged()
     }
 

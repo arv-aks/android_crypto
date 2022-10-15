@@ -1,18 +1,17 @@
 package com.example.cryptoone.api
 
 import com.example.cryptoone.model.details.CoinDetail
-import com.example.cryptoone.model.market.MarketsModel
-import kotlinx.serialization.json.JsonArray
+import com.example.cryptoone.model.market.MarketModel
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 
 interface CryptoApi {
 
     @GET("/api/v3/coins/markets")
-    fun getMarkets(@Query("vs_currency") vs_currency: String): Call<MarketsModel>
+    suspend fun getMarkets(@Query("vs_currency") vs_currency: String): Response<List<MarketModel>>
 
 
     @GET("/api/v3/coins/markets")
@@ -25,5 +24,5 @@ interface CryptoApi {
         @Query("sparkline") sparkline: Boolean = true,
 
 
-    ): Call<List<CoinDetail>>
+    ): Call<CoinDetail>
 }
